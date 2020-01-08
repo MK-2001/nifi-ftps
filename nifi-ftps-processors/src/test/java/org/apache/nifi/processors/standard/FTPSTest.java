@@ -36,6 +36,7 @@ public class FTPSTest {
     }
 
     @Test
+    @Ignore
     public void testBasicListPublic() {
         this.sot = TestRunners.newTestRunner(ListFTPS.class);
         this.sot.setProperty(FileTransfer.HOSTNAME,"test.rebex.net");

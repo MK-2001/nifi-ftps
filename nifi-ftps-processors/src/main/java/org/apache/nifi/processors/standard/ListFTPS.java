@@ -90,11 +90,6 @@ public class ListFTPS extends ListFileTransfer {
     }
 
     @Override
-    protected Scope getStateScope(ProcessContext processContext) {
-        return null;
-    }
-
-    @Override
     protected FileTransfer getFileTransfer(final ProcessContext context) {
         return new FTPSTransfer(context, getLogger());
     }
