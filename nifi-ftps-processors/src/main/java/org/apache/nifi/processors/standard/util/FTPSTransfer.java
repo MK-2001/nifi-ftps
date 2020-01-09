@@ -21,9 +21,6 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.nifi.components.PropertyDescriptor;
-import org.apache.nifi.components.ValidationContext;
-import org.apache.nifi.components.ValidationResult;
-import org.apache.nifi.context.PropertyContext;
 import org.apache.nifi.expression.ExpressionLanguageScope;
 import org.apache.nifi.flowfile.FlowFile;
 import org.apache.nifi.logging.ComponentLog;
@@ -31,8 +28,6 @@ import org.apache.nifi.processor.DataUnit;
 import org.apache.nifi.processor.ProcessContext;
 import org.apache.nifi.processor.exception.ProcessException;
 import org.apache.nifi.processor.util.StandardValidators;
-import org.apache.nifi.proxy.ProxyConfiguration;
-import org.apache.nifi.proxy.ProxySpec;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,9 +39,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
@@ -109,7 +106,22 @@ public class FTPSTransfer implements FileTransfer {
             .defaultValue("false")
             .addValidator(StandardValidators.BOOLEAN_VALIDATOR)
             .build();
-
+    public static final PropertyDescriptor VERIFY_HOSTNAME = new PropertyDescriptor.Builder()
+            .name("verify_hostname")
+            .displayName("Do verify hostname of the certificate")
+            .description("Do we verify CN of certificate?")
+            .required(true)
+            .allowableValues("true", "false")
+            .defaultValue("true")
+            .addValidator(StandardValidators.BOOLEAN_VALIDATOR)
+            .build();
+    public static final PropertyDescriptor PROT = new PropertyDescriptor.Builder()
+            .name("prot")
+            .displayName("Data Channel Protection Level")
+            .description("Data Channel Protection Level\n\n * C - Clear\n * S - Safe(SSL protocol only)\n * E - Confidential(SSL protocol only)\n * P - Private")
+            .allowableValues("C", "E", "S", "P")
+            .defaultValue("P")
+            .build();
 
 
     private final ComponentLog logger;
@@ -512,7 +524,6 @@ public class FTPSTransfer implements FileTransfer {
         }
 
 
-
         // we use the default : implicit false and negotiated TLS version (no SSL anymore)
         this.client = new FTPSClient();
         client.setBufferSize(ctx.getProperty(BUFFER_SIZE).asDataSize(DataUnit.B).intValue());
@@ -520,8 +531,11 @@ public class FTPSTransfer implements FileTransfer {
         client.setDefaultTimeout(ctx.getProperty(CONNECTION_TIMEOUT).asTimePeriod(TimeUnit.MILLISECONDS).intValue());
         // make sure the connections are coming from the proper host
         client.setRemoteVerificationEnabled(true);
+
         // make sure the SSL cert of the other side is trusted
-        client.setHostnameVerifier(new HostVerifier(ctx.getProperty(ALLOW_SELFSIGNED).asBoolean(),logger));
+        if (ctx.getProperty(VERIFY_HOSTNAME).asBoolean()) {
+            client.setHostnameVerifier(new HostVerifier(ctx.getProperty(ALLOW_SELFSIGNED).asBoolean(), logger));
+        }
 
         final String remoteHostname = ctx.getProperty(HOSTNAME).evaluateAttributeExpressions(flowFile).getValue();
         this.remoteHostName = remoteHostname;
@@ -553,7 +567,7 @@ public class FTPSTransfer implements FileTransfer {
         }
 
         client.execPBSZ(0);
-        client.execPROT("P");
+        client.execPROT(ctx.getProperty(PROT).getValue());
 
         final String connectionMode = ctx.getProperty(CONNECTION_MODE).getValue();
         if (connectionMode.equalsIgnoreCase(CONNECTION_MODE_ACTIVE)) {

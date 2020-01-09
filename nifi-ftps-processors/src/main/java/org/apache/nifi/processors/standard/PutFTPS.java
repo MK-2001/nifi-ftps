@@ -87,6 +87,8 @@ public class PutFTPS extends PutFileTransfer<FTPSTransfer> {
         properties.add(FTPSTransfer.BUFFER_SIZE);
         properties.add(FTPSTransfer.UTF8_ENCODING);
         properties.add(FTPSTransfer.ALLOW_SELFSIGNED);
+        properties.add(FTPSTransfer.VERIFY_HOSTNAME);
+        properties.add(FTPSTransfer.PROT);
 
         this.properties = Collections.unmodifiableList(properties);
     }
