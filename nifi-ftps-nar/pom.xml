@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.apache.nifi</groupId>
         <artifactId>nifi-standard-bundle</artifactId>
-        <version>1.10.0</version>
+        <version>1.9.2</version>
     </parent>
     <artifactId>nifi-standard-nar</artifactId>
     <packaging>nar</packaging>
@@ -26,6 +26,18 @@
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <source.skip>true</source.skip>
     </properties>
+    <repositories>        
+        <repository>
+            <id>simple-syslog-mvn</id>
+            <name>simple-syslog-mvn</name>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
+        <repository>
+            <id>macnificent-mvn</id>
+            <name>macnificent-mvn</name>
+            <url>http://mvn.martiansoftware.com/</url>
+        </repository>
+    </repositories>        
     <dependencies>
         <dependency>
             <groupId>kullervo16</groupId>
@@ -35,7 +47,7 @@
         <dependency>
             <groupId>org.apache.nifi</groupId>
             <artifactId>nifi-standard-services-api-nar</artifactId>
-            <version>1.10.0</version>
+            <version>1.9.2</version>
             <type>nar</type>
         </dependency>
         <dependency>
