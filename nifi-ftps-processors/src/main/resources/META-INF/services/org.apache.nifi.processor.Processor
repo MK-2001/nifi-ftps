@@ -16,3 +16,4 @@ org.apache.nifi.processors.standard.FetchFTPS
 org.apache.nifi.processors.standard.GetFTPS
 org.apache.nifi.processors.standard.ListFTPS
 org.apache.nifi.processors.standard.PutFTPS
+org.apache.nifi.processors.standard.es.CustomScrollElasticsearchHttp
