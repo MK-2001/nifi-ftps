@@ -64,6 +64,7 @@ public class FTPSTest {
     }
 
     @Test
+    @Ignore
     public void testBasicGetPublic() throws IOException {
         this.sot = TestRunners.newTestRunner(GetFTPS.class);
         this.sot.setProperty(FileTransfer.HOSTNAME,"test.rebex.net");

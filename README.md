@@ -20,7 +20,7 @@ So I decided to inject the additional JAR into the standard processor NAR. This 
 Installation is therefore building the "patched" standard processor NAR and replacing the original one by this one.
 
 ## Current state
-Written with NIFI 1.10.0 (you should be able to get it working on other versions as well by changing the dependencies, changed
+Written with NIFI 1.11.4 (you should be able to get it working on other versions as well by changing the dependencies, changed
 classes will not have changed a lot). 
 
 To allow self-signed certificates, you must specify the option in the processor. 
